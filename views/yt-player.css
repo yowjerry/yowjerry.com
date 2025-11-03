@@ -1,0 +1,132 @@
+.player-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+    aspect-ratio: 16/9;
+}
+
+.player-wrapper  iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none; /* if you’re disabling clicks */
+}
+
+.player-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.click-blocker {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: transparent;
+}
+
+.controls {
+    display: flex;
+    align-items: left;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.controls button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
+    
+}
+
+.controls input[type="range"] {
+    flex-grow: 1;
+}
+
+.video_root{
+    width: 100%;
+}
+
+.controls input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #444;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.controls input[type="range"]:hover {
+  background: #666;
+}
+
+/* Chrome, Edge, Safari */
+.controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #222;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: #f1f1f1;
+}
+
+/* Firefox */
+.controls input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #222;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.controls input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  background: #f1f1f1;
+}
+
+/* Firefox track */
+.controls input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #444;
+}
+
+/* Optional focus ring */
+.controls input[type="range"]:focus::-webkit-slider-thumb {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+
+.youtube-videos{
+  /* padding: 1000px; */
+  /* border: solid 1px black; */
+}
+.video-title{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+}
+.video-seek-bar{
+  width: 100%;
+}

@@ -42,3 +42,18 @@
     font-size: small;
     color: white;
 }
+
+.app-box{
+    /* border: solid 3px rgb(0, 35, 129);; */
+    /* border-radius: 10px; */
+    background-color: #00162c34;
+}
+.app-box-text{
+    font-size: smaller;
+    text-align: justify;
+}
+.section-title{
+    font-size: smaller;
+    color: #5ea0e1;
+    font-weight: bolder;
+}

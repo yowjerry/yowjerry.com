@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yow Jerry : Mixes</title>
+    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="./yt-player.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+    <div class="container-fluid p-0" id="root">
+        <header class="container content mb-2">
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center align-items-center flex-column">
+                    <div class="col-2 col-md-1">
+                        <img class="img-fluid" src="./assets/YOWJERRY-BLACK-TRANSPARENT-LOGO.png"
+                            style="filter: invert(100%);" alt="">
+                    </div>
+                </div>
+            </div>
+        </header>
+        <nav class="container content py-2 mb-2">
+            <div class=" d-flex gap-5 justify-content-center">
+                <a class="yow-nav-link" href="#">Home</a>
+                <a class="yow-nav-link" href="#">Mixes</a>
+                <a class="yow-nav-link" href="#">Apps</a>
+                <a class="yow-nav-link" href="#">Merchs</a>
+            </div>
+        </nav>
+        <section class="container content py-5 mb-2">
+            <div class="row">
+                <div class="col-12 col-md-4 youtube-videos" id="video1"></div>
+                <div class="col-12 col-md-4 mt-3 mt-md-0 youtube-videos" id="video2"></div>
+            </div>
+
+            <script>
+                // --- Load YouTube API only once ---
+                if (!window.YT) {
+                    const tag = document.createElement("script");
+                    tag.src = "https://www.youtube.com/iframe_api";
+                    document.head.appendChild(tag);
+                }
+
+                window.youtubeAPIReady = window.youtubeAPIReady || new Promise((resolve) => {
+                    window.onYouTubeIframeAPIReady = () => resolve();
+                });
+
+                /**
+                 * Create a custom YouTube player with lazy loading, thumbnail, and custom controls.
+                 * @param {Object} options
+                 * @param {string} options.containerId - ID of the container element.
+                 * @param {string} options.videoId - YouTube video ID.
+                 * @param {number} [options.width=640]
+                 * @param {number} [options.height=360]
+                 */
+                async function createCustomYouTubePlayer({ containerId, videoId, width = 640, height = 360 }) {
+                    await window.youtubeAPIReady;
+
+                    const container = document.getElementById(containerId);
+                    const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+                    container.innerHTML = `<div class='video_root'>
+                                               
+                                                <div class="player-wrapper" >
+                                                    <img src="${thumbnailUrl}" class="player-thumbnail" alt="Thumbnail" />
+                                                    <div class="video-frame"></div>
+                                                    <div class="click-blocker"></div>
+                                                </div> 
+                                                 <div class="video-title">In My World  2025-10-31 Trap kreyol</div>
+                                                <div class="controls">
+                                                    <input class='video-seek-bar' id="${containerId}-seek" type="range" min="0" max="100" value="0" />
+                                                    <button id="${containerId}-play"><i class="bi bi-play"></i></button>
+                                                    <button>Free Download <i class="bi bi-download"></i></button>
+                                                </div>
+                                            </div>`;
+                    const playBtn = document.getElementById(`${containerId}-play`);
+                    const seekBar = document.getElementById(`${containerId}-seek`);
+                    const thumbnail = container.querySelector(".player-thumbnail");
+                    const videoFrame = container.querySelector(".video-frame");
+
+                    let player = null;
+                    let interval = null;
+
+                    playBtn.addEventListener("click", async () => {
+                        if (!player) {
+                            // Replace thumbnail with iframe when user first clicks Play
+                            const iframeDiv = document.createElement("div");
+                            iframeDiv.id = `${containerId}-iframe`;
+                            // iframeDiv.style.display='none';
+                            videoFrame.prepend(iframeDiv);
+                            // thumbnail.replaceWith(iframeDiv);
+
+                            player = new YT.Player(`${containerId}-iframe`, {
+                                height: "auto",
+                                videoId,
+                                playerVars: { controls: 0, enablejsapi: 1 },
+                                events: {
+                                    onReady: () => player.playVideo(),
+                                    onStateChange: (event) =>
+                                        handlePlayerState(event, player, playBtn, seekBar, containerId, thumbnail, videoFrame),
+                                },
+                            });
+                        } else {
+                            const state = player.getPlayerState();
+                            if (state === YT.PlayerState.PLAYING) {
+                                player.pauseVideo();
+                            } else {
+                                player.playVideo();
+                            }
+                        }
+                    });
+
+                    // Seek bar interaction (only works once player is created)
+                    seekBar.addEventListener("input", (e) => {
+                        if (player) {
+                            const duration = player.getDuration();
+                            const newTime = (e.target.value / 100) * duration;
+                            player.seekTo(newTime, true);
+                        }
+                    });
+
+                    // Sync progress
+                    interval = setInterval(() => {
+
+
+                        if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                            const current = player.getCurrentTime();
+                            const duration = player.getDuration();
+                            seekBar.value = (current / duration) * 100;
+                        }
+
+                    }, 500);
+                }
+
+                function handlePlayerState(event, player, playBtn, seekBar, id, thumbnail, videoFrame) {
+                    const state = event.data;
+                    if (state === YT.PlayerState.PLAYING) {
+                        playBtn.innerHTML = `<i class="bi bi-pause"></i>`;
+                        thumbnail.style.display = "none";
+                        videoFrame.style.display = 'block'
+                    } else if (state === YT.PlayerState.PAUSED) {
+                        playBtn.innerHTML = `<i class="bi bi-play"></i>`;
+                        thumbnail.style.display = "block";
+                        videoFrame.style.display = 'none'
+                    } else if (state === YT.PlayerState.ENDED) {
+                        playBtn.innerHTML = `<i class="bi bi-play"></i>`;
+                        thumbnail.style.display = "block";
+                        videoFrame.style.display = 'none'
+                        seekBar.value = 0;
+                    }
+                }
+
+                // Example usage
+                createCustomYouTubePlayer({
+                    containerId: "video1",
+                    videoId: "Hw0MgD0lSoo",
+                    width: 480,
+                    height: 270,
+                });
+
+                createCustomYouTubePlayer({
+                    containerId: "video2",
+                    videoId: "1FrX8Yw9m_c",
+                    width: 640,
+                    height: 360,
+                });
+            </script>
+
+
+
+        </section>
+
+        <div class="container content py-5"></div>
+    </div>
+</body>
+
+</html>
